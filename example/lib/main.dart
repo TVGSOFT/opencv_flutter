@@ -1,12 +1,10 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:opencv_4/factory/pathfrom.dart';
 import 'package:opencv_4/opencv_4.dart';
-//uncomment when image_picker is installed
-import 'package:image_picker/image_picker.dart';
 
 void main() {
   runApp(MyApp());
@@ -58,12 +56,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }) async {
     try {
       //test with threshold
-      _byte = await Cv2.threshold(
+      _byte = await Cv2.adaptiveThreshold(
         pathFrom: pathFrom,
         pathString: pathString,
-        maxThresholdValue: maxThresholdValue,
-        thresholdType: thresholdType,
-        thresholdValue: thresholdValue,
+        maxValue: 200,
+        thresholdType: Cv2.THRESH_BINARY,
+        adaptiveMethod: Cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+        blockSize: 15,
+        constantValue: 12,
       );
 
       setState(() {
@@ -112,8 +112,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   _testFromCamera() async {
     //uncomment when image_picker is installed
-    final pickedFile = await picker.getImage(source: ImageSource.camera);
-    _image = File(pickedFile!.path);
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+
+    if (pickedFile == null) {
+      return;
+    }
+
+    _image = File(pickedFile.path);
     testOpenCV(
       pathFrom: CVPathFrom.GALLERY_CAMERA,
       pathString: _image!.path,
@@ -129,8 +134,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   _testFromGallery() async {
     //uncomment when image_picker is installed
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
-    _image = File(pickedFile!.path);
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile == null) {
+      return;
+    }
+
+    _image = File(pickedFile.path);
     testOpenCV(
       pathFrom: CVPathFrom.GALLERY_CAMERA,
       pathString: _image!.path,
@@ -170,7 +180,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   _byte!,
                                   width: 300,
                                   height: 300,
-                                  fit: BoxFit.fill,
+                                  fit: BoxFit.contain,
                                 )
                               : Container(
                                   width: 300,
@@ -193,9 +203,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Text('test assets'),
                             onPressed: _testFromAssets,
                             style: TextButton.styleFrom(
-                              primary: Colors.white,
                               backgroundColor: Colors.teal,
-                              onSurface: Colors.grey,
                             ),
                           ),
                         ),
@@ -205,9 +213,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Text('test url'),
                             onPressed: _testFromUrl,
                             style: TextButton.styleFrom(
-                              primary: Colors.white,
                               backgroundColor: Colors.teal,
-                              onSurface: Colors.grey,
                             ),
                           ),
                         ),
@@ -217,21 +223,17 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Text('test gallery'),
                             onPressed: _testFromGallery,
                             style: TextButton.styleFrom(
-                              primary: Colors.white,
                               backgroundColor: Colors.teal,
-                              onSurface: Colors.grey,
                             ),
                           ),
                         ),
                         SizedBox(
                           width: MediaQuery.of(context).size.width - 40,
                           child: TextButton(
-                            child: Text('test camara'),
+                            child: Text('test camera'),
                             onPressed: _testFromCamera,
                             style: TextButton.styleFrom(
-                              primary: Colors.white,
                               backgroundColor: Colors.teal,
-                              onSurface: Colors.grey,
                             ),
                           ),
                         ),

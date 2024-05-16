@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 import 'package:opencv_4/factory/colormaps/applycolormap_factory.dart';

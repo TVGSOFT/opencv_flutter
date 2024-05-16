@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (void)processWhitPathType:(int)pathType pathString:(NSString *)pathString data:(FlutterStandardTypedData *)data maxValue: (double)maxValue adaptiveMethod: (int) adaptiveMethod thresholdType: (int) thresholdType blockSize: (int) blockSize constantValue: (int) constantValue result: (FlutterResult) result;
 
++ (UIImageOrientation)orientation:(CFDataRef)dataRef;
 
 @end
 

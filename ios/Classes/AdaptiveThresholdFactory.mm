@@ -4,6 +4,7 @@
 //
 
 #import "AdaptiveThresholdFactory.h"
+#import "ImageUtils.h"
 
 @implementation AdaptiveThresholdFactory
 
@@ -65,12 +66,11 @@ FlutterStandardTypedData * adaptiveThresholdS(NSString * pathString, double maxV
         
         NSData * respuesta;
         if(blockSize % 2 == 1){
-            
-            
             CFDataRef file_data_ref = CFDataCreateWithBytesNoCopy(NULL, fileData.data(),
                                                                   bytesInFile,
                                                                   kCFAllocatorNull);
-            
+          	UIImageOrientation imageOrientation = [ImageUtils getOrientation:file_data_ref];
+          
             CGDataProviderRef image_provider = CGDataProviderCreateWithCFData(file_data_ref);
             
             CGImageRef image = nullptr;
@@ -97,6 +97,7 @@ FlutterStandardTypedData * adaptiveThresholdS(NSString * pathString, double maxV
                                                              colorSpace,                 // Colorspace
                                                              kCGImageAlphaNoneSkipLast |
                                                              kCGBitmapByteOrderDefault); // Bitmap info flags
+          	
             CGContextDrawImage(contextRef, CGRectMake(0, 0, cols, rows), image);
             CGContextRelease(contextRef);
             CFRelease(image);
@@ -132,7 +133,7 @@ FlutterStandardTypedData * adaptiveThresholdS(NSString * pathString, double maxV
                                                  kCGRenderingIntentDefault                   //intent
                                                  );
               // Getting UIImage from CGImage
-              UIImage *finalImage = [UIImage imageWithCGImage:imageRef];
+              UIImage *finalImage = [UIImage imageWithCGImage:imageRef scale:1.0f orientation:imageOrientation];
               CGImageRelease(imageRef);
               CGDataProviderRelease(provider);
               CGColorSpaceRelease(colorSpace);

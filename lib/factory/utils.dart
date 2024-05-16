@@ -2,7 +2,6 @@
  * Copyright (c) 2021 fgsoruco.
  * See LICENSE for more details.
  */
-import 'dart:typed_data';
 import 'package:flutter/services.dart';
 
 ///class with useful methods
