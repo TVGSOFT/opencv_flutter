@@ -11,8 +11,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ImageUtils : NSObject
 
-+ (void)transformImage:(CFDataRef)dataRef contextRef:(CGContextRef)contextRef width:(CGFloat)width height:(CGFloat)height;
-
 + (UIImageOrientation)getOrientation:(CFDataRef)dataRef;
 
 @end

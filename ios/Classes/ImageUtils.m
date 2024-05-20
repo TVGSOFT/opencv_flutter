@@ -9,29 +9,6 @@
 
 @implementation ImageUtils
 
-+ (void)transformImage:(CFDataRef)dataRef contextRef:(CGContextRef)contextRef width:(CGFloat)width height:(CGFloat)height
-{
-  CGImageSourceRef sourceRef = CGImageSourceCreateWithData(dataRef, NULL);
-  NSDictionary *properties = CFBridgingRelease(CGImageSourceCopyPropertiesAtIndex(sourceRef, 0, NULL));
-  UIImageOrientation imageOrientation = (UIImageOrientation) [[properties valueForKey:@"Orientation"] intValue];
-
-  CGAffineTransform transform = CGAffineTransformIdentity;
-
-  switch (imageOrientation) {
-    case UIImageOrientationLeftMirrored:
-      transform = CGAffineTransformRotate(transform, M_PI_2);
-      break;
-      
-    case UIImageOrientationRightMirrored:
-      transform = CGAffineTransformRotate(transform, -M_PI_2);
-      break;
-    default:
-      return;
-  }
-  
-  CGContextConcatCTM(contextRef, transform);
-}
-
 + (UIImageOrientation)getOrientation:(CFDataRef)dataRef
 {
   CGImageSourceRef sourceRef = CGImageSourceCreateWithData(dataRef, NULL);
@@ -39,13 +16,28 @@
   UIImageOrientation imageOrientation = (UIImageOrientation) [[properties valueForKey:@"Orientation"] intValue];
 
   switch (imageOrientation) {
+    case UIImageOrientationLeft:
+      return UIImageOrientationUp;
+
     case UIImageOrientationLeftMirrored:
       return UIImageOrientationRight;
       
+    case UIImageOrientationRight:
+      return UIImageOrientationDown;
+      
     case UIImageOrientationRightMirrored:
       return UIImageOrientationLeft;
+      
+    case UIImageOrientationDownMirrored:
+    case UIImageOrientationDown:
+      return UIImageOrientationUp;
+      
+    case UIImageOrientationUpMirrored:
+    case UIImageOrientationUp:
+      return UIImageOrientationDown;
+      
     default:
-      return imageOrientation;
+      return UIImageOrientationLeft;
   }
 }
 
